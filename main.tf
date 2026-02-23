@@ -21,3 +21,6 @@ resource "aws_subnet" "name1" {
     }
   
 }
+resource "aws_s3_bucket" "name" {
+  bucket = "pppavancharypppww"
+}
