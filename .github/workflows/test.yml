@@ -4,7 +4,7 @@ on:
   # push:
   #   branches: [ main ]
   workflow_dispatch:   # ✅ Manual trigger only
-  inputs:
+   inputs:
       action:
         description: "Choose Terraform Action"
         required: true
