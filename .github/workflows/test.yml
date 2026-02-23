@@ -1,9 +1,9 @@
 name: Terraform Deploy
 
 on:
-  # push:
-  #   branches: [ main ]
-  workflow_dispatch:   # ✅ Manual trigger only
+  push:
+    branches: [ main ]
+  # workflow_dispatch:   # ✅ Manual trigger only
 
 
 jobs:
@@ -33,3 +33,6 @@ jobs:
 
       # - name: Terraform Apply
       #   run: terraform apply -auto-approve tfplan
+        
+      - name: Terraform Destroy
+        run: terraform destroy -auto-approve
