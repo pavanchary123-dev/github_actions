@@ -28,9 +28,14 @@ jobs:
       - name: Terraform Validate
         run: terraform validate
 
-      - name: Terraform Plan
-        run: terraform plan -out=tfplan
+      # - name: Terraform  apply Plan
+      #   run: terraform plan -out=tfplan
 
-      - name: Terraform Apply
-        run: terraform destroy -auto-approve tfplan
-        # run: terraform apply -auto-approve tfplan
+      # - name: Terraform Apply
+      #   run: terraform apply -auto-approve tfplan
+        
+      - name: Terraform Destroy Plan
+        run: terraform plan -destroy -out=tfplan
+        
+      - name: Terraform Destroy Apply
+        run: terraform apply -auto-approve tfplan
