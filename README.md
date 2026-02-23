@@ -170,36 +170,4 @@ Infrastructure lifecycle control
 Do NOT manage the backend S3 bucket inside the infra project.
 
 Always keep backend infrastructure separate.
-                    ┌─────────────────────────────┐
-                    │        GitHub Repository    │
-                    │  (infra/ Terraform code)    │
-                    └──────────────┬──────────────┘
-                                   │
-                                   │ Push / Manual Trigger
-                                   ▼
-                    ┌─────────────────────────────┐
-                    │       GitHub Actions        │
-                    │  workflow_dispatch input    │
-                    │  (apply / destroy)          │
-                    └──────────────┬──────────────┘
-                                   │
-                                   │ AWS Credentials (Secrets)
-                                   ▼
-                    ┌─────────────────────────────┐
-                    │       Terraform CLI         │
-                    │  init → plan → apply       │
-                    └──────────────┬──────────────┘
-                                   │
-             ┌─────────────────────┴─────────────────────┐
-             │                                           │
-             ▼                                           ▼
- ┌─────────────────────────┐                ┌─────────────────────────┐
- │        S3 Bucket        │                │     DynamoDB Table      │
- │ (Remote State Storage)  │                │   (State Locking)       │
- └─────────────────────────┘                └─────────────────────────┘
-             │
-             ▼
- ┌─────────────────────────────────────────────────────────┐
- │                AWS Infrastructure                       │
- │  VPC / Subnets / EC2 / Security Groups / etc           │
- └─────────────────────────────────────────────────────────┘
+                   
