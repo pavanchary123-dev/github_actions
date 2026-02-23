@@ -107,35 +107,27 @@ on:
 jobs:
   terraform:
     runs-on: ubuntu-latest
-
     defaults:
       run:
         working-directory: infra
-
     steps:
       - name: Checkout
         uses: actions/checkout@v4
-
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: us-east-1
-
       - name: Setup Terraform
         uses: hashicorp/setup-terraform@v3
-
       - name: Terraform Init
         run: terraform init
-
       - name: Terraform Plan
         run: terraform plan
-
       - name: Terraform Apply
         if: github.event.inputs.action == 'apply'
         run: terraform apply -auto-approve
-
       - name: Terraform Destroy
         if: github.event.inputs.action == 'destroy'
         run: terraform destroy -auto-approve
@@ -178,17 +170,36 @@ Infrastructure lifecycle control
 Do NOT manage the backend S3 bucket inside the infra project.
 
 Always keep backend infrastructure separate.
-
-For production, use IAM roles or OIDC instead of static access keys.
-
-📌 Future Improvements (Next Learning Steps)
-
-Add EC2 and Security Groups
-
-Multi-environment (dev / prod separation)
-
-GitHub OIDC authentication
-
-Approval gates before production apply
-
-Modular Terraform structure
+                    ┌─────────────────────────────┐
+                    │        GitHub Repository    │
+                    │  (infra/ Terraform code)    │
+                    └──────────────┬──────────────┘
+                                   │
+                                   │ Push / Manual Trigger
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │       GitHub Actions        │
+                    │  workflow_dispatch input    │
+                    │  (apply / destroy)          │
+                    └──────────────┬──────────────┘
+                                   │
+                                   │ AWS Credentials (Secrets)
+                                   ▼
+                    ┌─────────────────────────────┐
+                    │       Terraform CLI         │
+                    │  init → plan → apply       │
+                    └──────────────┬──────────────┘
+                                   │
+             ┌─────────────────────┴─────────────────────┐
+             │                                           │
+             ▼                                           ▼
+ ┌─────────────────────────┐                ┌─────────────────────────┐
+ │        S3 Bucket        │                │     DynamoDB Table      │
+ │ (Remote State Storage)  │                │   (State Locking)       │
+ └─────────────────────────┘                └─────────────────────────┘
+             │
+             ▼
+ ┌─────────────────────────────────────────────────────────┐
+ │                AWS Infrastructure                       │
+ │  VPC / Subnets / EC2 / Security Groups / etc           │
+ └─────────────────────────────────────────────────────────┘
